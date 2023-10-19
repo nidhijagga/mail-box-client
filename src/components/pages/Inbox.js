@@ -9,7 +9,6 @@ import { Link } from "react-router-dom";
 function Inbox() {
   const dispatch = useDispatch();
   const inboxdata = useSelector((state) => state.in.inbox);
-  console.log(inboxdata);
 
   const receiver = localStorage.getItem("email").replace(/[@.]/g, ""); // Removes '@' and '.'
 
@@ -41,9 +40,43 @@ function Inbox() {
           });
         }
 
-        //console.log(data)
-        console.log(myarr);
         dispatch(inboxAction.setinbox(myarr));
+      })
+      .catch((err) => {
+        alert(err.message);
+      });
+  };
+
+  const deleteHandler = (id) => {
+
+
+    fetch(
+      `https://mail-box-client-86375-default-rtdb.firebaseio.com/Email/${receiver}/Recieve/${id}/.json`,
+      {
+        method: "DELETE",
+
+        headers: {
+          "Content-Type": "application/json",
+        },
+      }
+    )
+      .then((res) => {
+        if (res.ok) {
+          return res.json();
+        } else {
+          return res.json().then((data) => {
+            if (data && data.error && data.error.message) {
+              let errMessage = "Authentication Failed, " + data.error.message;
+              throw new Error(errMessage);
+            }
+          });
+        }
+      })
+      .then((data) => {
+        submitHandler();
+        //setExpensesData((data) => [...data, expenses]);
+        //alert('passward reset link send plz chechk email')
+        //console.log(data);
       })
       .catch((err) => {
         alert(err.message);
@@ -71,6 +104,13 @@ function Inbox() {
             {item.message.length > 5
               ? `${item.message.substring(0, 5)}...`
               : item.message}
+            <Button
+              variant="danger"
+              style={{ float: "right" }}
+              onClick={() => deleteHandler(item.id)}
+            >
+              Delete
+            </Button>
           </p>
 
           <hr />
