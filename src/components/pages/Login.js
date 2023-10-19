@@ -4,7 +4,7 @@ import { NavLink } from "react-bootstrap";
 import { Link } from "react-router-dom";
 import { useNavigate } from 'react-router-dom';
 import { useDispatch } from 'react-redux';
-import { authAction } from '../../store/authSlice';
+import { authAction } from '../../store/AuthSlice';
 
 
 function Login() {
@@ -32,8 +32,7 @@ function Login() {
 
         }).then((res)=>{
             if(res.ok){
-                const replacedemail = enteredemail.replace('@','').replace('.','')
-                localStorage.setItem('email',replacedemail)
+                localStorage.setItem('email',enteredemail)
                 return res.json()
 
             }else{

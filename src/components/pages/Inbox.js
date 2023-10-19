@@ -1,19 +1,21 @@
-import React, { useEffect } from "react";
-import { useDispatch } from "react-redux";
-import { sentboxAction } from "../../store/Sentboxslice";
-import { useSelector } from "react-redux";
+import React from "react";
+import { useState } from "react";
+import { inboxAction } from "../../store/InboxSlice";
+import { useDispatch, useSelector } from "react-redux";
+import { useEffect } from "react";
 import { Button } from "react-bootstrap";
 import { Link } from "react-router-dom";
 
-function Sentbox() {
-  const emaildata = useSelector((state) => state.sent.sentbox);
+function Inbox() {
   const dispatch = useDispatch();
+  const inboxdata = useSelector((state) => state.in.inbox);
+  console.log(inboxdata);
 
-  const sender = localStorage.getItem("email").replace(/[@.]/g, ""); // Removes '@' and '.'
+  const receiver = localStorage.getItem("email").replace(/[@.]/g, ""); // Removes '@' and '.'
 
   const submitHandler = () => {
     fetch(
-      `https://mail-box-client-86375-default-rtdb.firebaseio.com/Email/${sender}/sent.json`
+      `https://mail-box-client-86375-default-rtdb.firebaseio.com/Email/${receiver}/Recieve.json`
     )
       .then((res) => {
         if (res.ok) {
@@ -39,7 +41,9 @@ function Sentbox() {
           });
         }
 
-        dispatch(sentboxAction.setsenbox(myarr));
+        //console.log(data)
+        console.log(myarr);
+        dispatch(inboxAction.setinbox(myarr));
       })
       .catch((err) => {
         alert(err.message);
@@ -59,12 +63,11 @@ function Sentbox() {
         <Link to="/welcome">Compose email</Link>
       </Button>
 
-      {emaildata.map((item, index) => (
+      {inboxdata.map((item, index) => (
         <div key={index} style={{ backgroundColor: "white", margin: "2%" }}>
           <p>
-            To: {item.email}&nbsp;&nbsp;&nbsp;
-            Subject: {item.subject}&nbsp;&nbsp;&nbsp;
-            Message:{"         "}
+            From: {item.email}&nbsp;&nbsp;&nbsp; Subject: {item.subject}
+            &nbsp;&nbsp;&nbsp; Message:{" "}
             {item.message.length > 5
               ? `${item.message.substring(0, 5)}...`
               : item.message}
@@ -77,4 +80,4 @@ function Sentbox() {
   );
 }
 
-export default Sentbox;
+export default Inbox;
